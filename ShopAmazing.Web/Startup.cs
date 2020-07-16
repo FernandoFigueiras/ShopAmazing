@@ -7,23 +7,35 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ShopAmazing.Web.Data;
 
 namespace ShopAmazing.Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration)//recebe as configuracoes
         {
             Configuration = configuration;
         }
-
+        //e a partir daqui que vai ser arrancada a aplicacao com o dependency injection
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)//e aqui que os servicos vao ser configurados
         {
+            //Configurar a connection string nos servicos
+            services.AddDbContext<DataContext>(config =>
+            {//adiciona um contexto de dados e para usar e necessario a connection string
+                config.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+
+
+
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -38,7 +50,7 @@ namespace ShopAmazing.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.IsDevelopment())//aqui e feito o arranque por desenvolvimento ou deploy
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -56,7 +68,7 @@ namespace ShopAmazing.Web
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Index}/{id?}");//as routes sao configuradas aqui
             });
         }
     }
