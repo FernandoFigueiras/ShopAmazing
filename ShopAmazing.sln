@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30310.162
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShopAmazing.Common", "ShopAmazing.Common\ShopAmazing.Common.csproj", "{476F0FC0-DE06-4547-A6D5-F965FDF19A0B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShopAmazing.Web", "ShopAmazing.Web\ShopAmazing.Web.csproj", "{869C2F62-4718-41DE-9C81-FC7DE9618420}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{476F0FC0-DE06-4547-A6D5-F965FDF19A0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{476F0FC0-DE06-4547-A6D5-F965FDF19A0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{476F0FC0-DE06-4547-A6D5-F965FDF19A0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{476F0FC0-DE06-4547-A6D5-F965FDF19A0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{869C2F62-4718-41DE-9C81-FC7DE9618420}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{869C2F62-4718-41DE-9C81-FC7DE9618420}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{869C2F62-4718-41DE-9C81-FC7DE9618420}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{869C2F62-4718-41DE-9C81-FC7DE9618420}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9A900644-9126-449F-945A-432A73AF66CC}
+	EndGlobalSection
+EndGlobal
