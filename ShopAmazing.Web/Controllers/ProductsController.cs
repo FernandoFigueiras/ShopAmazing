@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,30 +14,35 @@ namespace ShopAmazing.Web.Controllers
     public class ProductsController : Controller
     {
         //private readonly DataContext _context;
-        private readonly IRepository _repository;
+        //private readonly IRepository _repository;
+        private readonly IProductRepository _productRepository;
 
-        public ProductsController(/*DataContext context*/ IRepository repository)
+        public ProductsController(/*DataContext context*/ /*IRepository repository*/ IProductRepository productRepository)
         {
             //_context = context;
-            _repository = repository;
+            //_repository = repository;
+            _productRepository = productRepository;
         }
 
         // GET: Products
         public IActionResult Index()
         {
             //return View(await _context.Products.ToListAsync());
-            return View(_repository.GetProducts());
+            return View(_productRepository.GetAll());
         }
 
         // GET: Products/Details/5
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var product = _repository.GetProduct(id.Value);//id.value porque o int esta como not null (?) por isso pode ou nao vir com valor
+
+            //var product = _repository.GetProduct(id.Value);//id.value porque o int esta como not null (?) por isso pode ou nao vir com valor
+
+            var product = await _productRepository.GetByIdAsync(id.Value);
             if (product == null)
             {
                 return NotFound();
@@ -60,22 +66,24 @@ namespace ShopAmazing.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _repository.AddProduct(product);
-                await _repository.SaveAllAsync();
+                //_repository.AddProduct(product);
+                //await _repository.SaveAllAsync();
+                await _productRepository.CreateAsync(product);
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
         }
 
         // GET: Products/Edit/5
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var product = _repository.GetProduct(id.Value);
+            //var product = _repository.GetProduct(id.Value);
+            var product = await _productRepository.GetByIdAsync(id.Value);
             if (product == null)
             {
                 return NotFound();
@@ -94,12 +102,13 @@ namespace ShopAmazing.Web.Controllers
             {
                 try
                 {
-                    _repository.UpdateProduct(product);
-                    await _repository.SaveAllAsync();
+                    //_repository.UpdateProduct(product);
+                    //await _repository.SaveAllAsync();
+                    await _productRepository.UpdateAsync(product);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_repository.ProductExists(product.Id))
+                    if (!await _productRepository.ExistsAsync(product.Id))
                     {
                         return NotFound();
                     }
@@ -114,14 +123,15 @@ namespace ShopAmazing.Web.Controllers
         }
 
         // GET: Products/Delete/5
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var product = _repository.GetProduct(id.Value);
+            //var product = _repository.GetProduct(id.Value);
+            var product = await _productRepository.GetByIdAsync(id.Value);
             if (product == null)
             {
                 return NotFound();
@@ -135,11 +145,13 @@ namespace ShopAmazing.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = _repository.GetProduct(id);
-            _repository.RemoveProduct(product);
-            await _repository.SaveAllAsync();
+            //var product = _repository.GetProduct(id);
+            //_repository.RemoveProduct(product);
+            //await _repository.SaveAllAsync();
+
+            var product = await _productRepository.GetByIdAsync(id);
+            await _productRepository.DeleteAsync(product);
             return RedirectToAction(nameof(Index));
         }
-
     }
 }

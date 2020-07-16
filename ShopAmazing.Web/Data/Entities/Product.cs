@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ShopAmazing.Web.Data.Entities
 {
-    public class Product
+    public class Product : IEntity //Esta classe implementa o IEntity para ser usado pelo repositorio Generico
     {
         public int Id { get; set; }
 

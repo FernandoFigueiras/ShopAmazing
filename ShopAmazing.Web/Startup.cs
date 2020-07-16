@@ -39,8 +39,9 @@ namespace ShopAmazing.Web
 
 
             services.AddTransient<SeedDb>();//injectar a seed db (Dependency injection)
-            services.AddScoped<IRepository, Repository>();//Injectar o repositorio. em scoped porque ele e chamado sempre que se efectura uma action O startup compila e ve o interface e depois chama a class
-
+            /*services.AddScoped<IRepository, Repository>();*///Injectar o repositorio. em scoped porque ele e chamado sempre que se efectura uma action O startup compila e ve o interface e depois chama a class
+            services.AddScoped<IProductRepository, ProductRepository>();//repositorio generico aplicado ao produto
+            services.AddScoped<ICountryRepository, CountryRepository>();//repositorio generico aplicado ao Country
 
             //teste Mock
             //services.AddScoped<IRepository, MockRepository>();
