@@ -8,9 +8,9 @@ namespace ShopAmazing.Web.Data.Entities
         public int Id { get; set; }
 
 
-
+        [MaxLength(50, ErrorMessage ="The field {0} must contain only {1} characters long")]
+        [Required]
         public string Name { get; set; }
-
 
 
         public decimal Price { get; set; }
@@ -21,11 +21,11 @@ namespace ShopAmazing.Web.Data.Entities
 
 
         [Display(Name = "Last Purchase")]
-        public DateTime LastPurchase { get; set; }
+        public DateTime? LastPurchase { get; set; }
 
 
         [Display(Name = "Last Sale")]
-        public DateTime LastSale { get; set; }
+        public DateTime? LastSale { get; set; }
 
 
         [Display(Name = "Is Available?")]
