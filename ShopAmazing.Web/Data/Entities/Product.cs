@@ -34,5 +34,9 @@ namespace ShopAmazing.Web.Data.Entities
 
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public double Stock { get; set; }
+
+
+        public User User { get; set; }//aqui estou a guardar o User, relacao de muitos para um
+        //So temos de guardar onde se pretende que apareca a informacao que a relacao e estabelecida automaticamente.
     }
 }

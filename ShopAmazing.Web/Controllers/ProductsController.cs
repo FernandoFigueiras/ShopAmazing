@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ShopAmazing.Web.Data;
 using ShopAmazing.Web.Data.Entities;
+using ShopAmazing.Web.Helpers;
 
 namespace ShopAmazing.Web.Controllers
 {
@@ -16,12 +17,14 @@ namespace ShopAmazing.Web.Controllers
         //private readonly DataContext _context;
         //private readonly IRepository _repository;
         private readonly IProductRepository _productRepository;
+        private readonly IUserHelper _userHelper;
 
-        public ProductsController(/*DataContext context*/ /*IRepository repository*/ IProductRepository productRepository)
+        public ProductsController(/*DataContext context*/ /*IRepository repository*/ IProductRepository productRepository, IUserHelper userHelper)
         {
             //_context = context;
             //_repository = repository;
             _productRepository = productRepository;
+            _userHelper = userHelper;
         }
 
         // GET: Products
@@ -66,6 +69,12 @@ namespace ShopAmazing.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+
+                //por o user no product
+                //TODO: Change for logged user
+                product.User = await _userHelper.GetUserByEmailAsync("fjfigdev@gmail.com");
+
+
                 //_repository.AddProduct(product);
                 //await _repository.SaveAllAsync();
                 await _productRepository.CreateAsync(product);
@@ -102,6 +111,12 @@ namespace ShopAmazing.Web.Controllers
             {
                 try
                 {
+                    //TODO: Change for logged user
+                    product.User = await _userHelper.GetUserByEmailAsync("fjfigdev@gmail.com");
+                    //temos de por aqui porque caso corra mal no get como na view nao aparece campo nenhum para editar chamamos novamente o User
+                    //se falhar a validacao do GET temos de chamar de novo a validacao
+
+
                     //_repository.UpdateProduct(product);
                     //await _repository.SaveAllAsync();
                     await _productRepository.UpdateAsync(product);
