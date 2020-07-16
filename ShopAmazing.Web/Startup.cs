@@ -33,8 +33,17 @@ namespace ShopAmazing.Web
                 config.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddTransient<SeedDb>();//injectar a seed db (Dependency injection)
 
+
+            //Aqui sao injectados os servicos que vao sendo criados
+
+
+            services.AddTransient<SeedDb>();//injectar a seed db (Dependency injection)
+            services.AddScoped<IRepository, Repository>();//Injectar o repositorio. em scoped porque ele e chamado sempre que se efectura uma action O startup compila e ve o interface e depois chama a class
+
+
+            //teste Mock
+            //services.AddScoped<IRepository, MockRepository>();
 
 
             services.Configure<CookiePolicyOptions>(options =>
