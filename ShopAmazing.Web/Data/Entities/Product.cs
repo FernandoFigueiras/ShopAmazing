@@ -38,5 +38,19 @@ namespace ShopAmazing.Web.Data.Entities
 
         public User User { get; set; }//aqui estou a guardar o User, relacao de muitos para um
         //So temos de guardar onde se pretende que apareca a informacao que a relacao e estabelecida automaticamente.
+
+        //para devolver o link completo da imagem
+        public string ImageFullPath 
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(this.ImageUrl))
+                {
+                    return null;
+                }
+                //link inteiro
+                return $"https://shopamazing.azurewebsites.net{this.ImageUrl.Substring(1)}";//o substring 1 tira o til, constroi uma string nova e tira o caracter especificado, neste caso o 1
+            }
+        }
     }
 }

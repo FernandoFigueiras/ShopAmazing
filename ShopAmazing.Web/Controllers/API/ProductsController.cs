@@ -18,7 +18,7 @@ namespace ShopAmazing.Web.Controllers.API//APi controller class empty na criacao
         [HttpGet]
         public IActionResult GetProducts()//mesmo que nao se ponha a notacao httpget ele funciona porque o nome e get, boa pratica por e vai ter mais metodos com o nome de Get.
         {
-            return Ok(_productRepository.GetAll());//Como isto e um HTTP requeste passa as mensagem de HTTP da api
+            return Ok(_productRepository./*GetAll()*/GetAllWithUsers());//Como isto e um HTTP requeste passa as mensagem de HTTP da api
             //Este OK envolve tudo o que ele recebe do GetAll e serializa tudo em Jason e retorna atravez da API.
         }
     }
