@@ -27,7 +27,11 @@
             @Html.DisplayNameFor(model => model.ImageUrl)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.ImageUrl)
+            @*@Html.DisplayFor(model => model.ImageUrl)*@
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {<!--Url.Content e onde se vai buscar o ficheiro-->
+                <img src="@Url.Content(Model.ImageUrl)" alt="Image" style="width: 200px; height: 300px; max-width: 100%; height: auto;" /><!--Isto e o link que esta na base de dados-->
+            }
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.LastPurchase)

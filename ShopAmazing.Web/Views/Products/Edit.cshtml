@@ -1,4 +1,5 @@
-﻿@model ShopAmazing.Web.Data.Entities.Product
+﻿@*@model ShopAmazing.Web.Data.Entities.Product*@
+@model ShopAmazing.Web.Models.ProductViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -10,9 +11,11 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
+            <!--por causa de receber um ficheiro o enctype-->
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ImageUrl" /><!--POrque se a pessoa nao alterar o file novo ficamos com o URL que vem no modelo para o post do edit-->
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
@@ -23,10 +26,15 @@
                 <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
+            @*<div class="form-group">
+                    <label asp-for="ImageUrl" class="control-label"></label>
+                    <input asp-for="ImageUrl" class="form-control" />
+                    <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                </div>*@
             <div class="form-group">
-                <label asp-for="ImageUrl" class="control-label"></label>
-                <input asp-for="ImageUrl" class="form-control" />
-                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                <label asp-for="ImageFile" class="control-label"></label>
+                <input asp-for="ImageFile" class="form-control" type="file" /><!--Para deixar de ser caixa de texto e passar a ser upload de ficheiro o type="file"-->
+                <span asp-validation-for="ImageFile" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="LastPurchase" class="control-label"></label>
@@ -56,10 +64,17 @@
             </div>
         </form>
     </div>
+    <!--Acrescentamos isto para que se veja a imagem-->
+    <div class="col-md-4">
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {<!--Url.Content e onde se vai buscar o ficheiro-->
+            <img src="@Url.Content(Model.ImageUrl)" alt="Image" style="width: 200px; height: 300px; max-width: 100%; height: auto;" /><!--Isto e o link que esta na base de dados-->
+        }
+    </div>
 </div>
 
 
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
