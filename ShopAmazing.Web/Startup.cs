@@ -65,6 +65,8 @@ namespace ShopAmazing.Web
             services.AddScoped<IProductRepository, ProductRepository>();//repositorio generico aplicado ao produto
             services.AddScoped<ICountryRepository, CountryRepository>();//repositorio generico aplicado ao Country
             services.AddScoped<IUserHelper, UserHelper>();//Bypass do UserManager do core que nao usamos directamente
+            services.AddScoped<IImageHelper, ImageHelper>();
+            services.AddScoped<IConverterHelper, ConverterHelper>();
 
             //teste Mock
             //services.AddScoped<IRepository, MockRepository>();

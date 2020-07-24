@@ -20,13 +20,20 @@ namespace ShopAmazing.Web.Controllers
         //private readonly IRepository _repository;
         private readonly IProductRepository _productRepository;
         private readonly IUserHelper _userHelper;
+        private readonly IImageHelper _imageHelper;
+        private readonly IConverterHelper _converterHelper;
 
-        public ProductsController(/*DataContext context*/ /*IRepository repository*/ IProductRepository productRepository, IUserHelper userHelper)
+        public ProductsController(/*DataContext context*/ /*IRepository repository*/ IProductRepository productRepository,
+            IUserHelper userHelper,
+            IImageHelper imageHelper,
+            IConverterHelper converterHelper)
         {
             //_context = context;
             //_repository = repository;
             _productRepository = productRepository;
             _userHelper = userHelper;
+            _imageHelper = imageHelper;
+            _converterHelper = converterHelper;
         }
 
         // GET: Products
@@ -74,31 +81,40 @@ namespace ShopAmazing.Web.Controllers
                 //caminho para a pasta imagens dos produtos vindas do upload
                 var path = string.Empty;
 
-                if (model.ImageFile != null && model.ImageFile.Length>0)//se existe upload ou nao, pode ou nao por imagem
+                if (model.ImageFile != null/* && model.ImageFile.Length>0*/)//se existe upload ou nao, pode ou nao por imagem
                 {
 
-                    var guid = Guid.NewGuid().ToString();
-                    var file = $"{guid}.jpg";
+                    //Aqui vai buscar o helper
+                    path = await _imageHelper.UploadImageAsync(model.ImageFile, "Products");
+
+                    //O mesmo no edit
 
 
-                    //a pessoa carrrega a imagem mas o caminho vai para dentro do atributo da bd no image url do products, mas o ficheiro vai para dentro da pasta images / products
-                    path = Path.Combine(
-                        Directory.GetCurrentDirectory(),//directoria do servidor
-                        "wwwroot\\images\\Products",//o caminho
-                        /*model.ImageFile.FileName*/ file);//nome do ficheiro
+                    //Isto passou para o Helper
 
-                    using (var stream = new FileStream(path, FileMode.Create))//cria o ficheiro
-                    {
-                        await model.ImageFile.CopyToAsync(stream);
-                    }
+                    //var guid = Guid.NewGuid().ToString();
+                    //var file = $"{guid}.jpg";
 
-                    path = $"~/images/Products/{/*model.ImageFile.FileName*/ file}";//isto vai servir para guardar na base de dados o caminho da imagem ja guardada na pasta de imagens
-                    //Temos de alterar o mesmo nome do ficheiro usamos para isso o GUID
+
+                    ////a pessoa carrrega a imagem mas o caminho vai para dentro do atributo da bd no image url do products, mas o ficheiro vai para dentro da pasta images / products
+                    //path = Path.Combine(
+                    //    Directory.GetCurrentDirectory(),//directoria do servidor
+                    //    "wwwroot\\images\\Products",//o caminho
+                    //    /*model.ImageFile.FileName*/ file);//nome do ficheiro
+
+                    //using (var stream = new FileStream(path, FileMode.Create))//cria o ficheiro
+                    //{
+                    //    await model.ImageFile.CopyToAsync(stream);
+                    //}
+
+                    //path = $"~/images/Products/{/*model.ImageFile.FileName*/ file}";//isto vai servir para guardar na base de dados o caminho da imagem ja guardada na pasta de imagens
+                    ////Temos de alterar o mesmo nome do ficheiro usamos para isso o GUID
                 }
 
                 //agora temos de passar de um model para um product para guardar na base de dados, temos de converter
 
-                var product = this.ToProduct(model, path);//isto e um metodo nossoi que construimos
+                //var product = this.ToProduct(model, path);//isto e um metodo nosso que construimos
+                var product = _converterHelper.ToProduct(model, path, true);
 
 
                 //por o user no product
@@ -114,22 +130,23 @@ namespace ShopAmazing.Web.Controllers
             return View(model);
         }
 
-        private /*object*/ Product ToProduct(ProductViewModel model, string path)
-        {
-            //retorna um Product depois de ser feita a conversao para ser guardado na base de dadis
-            return new Product
-            {
-                Id = model.Id,
-                ImageUrl = path,
-                IsAvailable = model.IsAvailable,
-                LastPurchase = model.LastPurchase,
-                LastSale = model.LastSale,
-                Name = model.Name,
-                Price = model.Price,
-                Stock = model.Stock,
-                User = model.User,
-            };
-        }
+        //Isto passou para os helpers
+        //private /*object*/ Product ToProduct(ProductViewModel model, string path)
+        //{
+        //    //retorna um Product depois de ser feita a conversao para ser guardado na base de dadis
+        //    return new Product
+        //    {
+        //        Id = model.Id,
+        //        ImageUrl = path,
+        //        IsAvailable = model.IsAvailable,
+        //        LastPurchase = model.LastPurchase,
+        //        LastSale = model.LastSale,
+        //        Name = model.Name,
+        //        Price = model.Price,
+        //        Stock = model.Stock,
+        //        User = model.User,
+        //    };
+        //}
 
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int? id)//queremos que a imagem ja esteja la quando se vai a view
@@ -146,25 +163,27 @@ namespace ShopAmazing.Web.Controllers
                 return NotFound();
             }
 
-            var model = this.ToProductViewModel(product);//Queremos que a view ja tenha a imagem
+            //var model = this.ToProductViewModel(product);//Queremos que a view ja tenha a imagem
+            var model = _converterHelper.ToProductViewModel(product);
             return View(model);
         }
 
-        private ProductViewModel ToProductViewModel(Product product)
-        {
-            return new ProductViewModel
-            {
-                Id = product.Id,
-                ImageUrl = product.ImageUrl,
-                IsAvailable = product.IsAvailable,
-                LastPurchase = product.LastPurchase,
-                LastSale = product.LastSale,
-                Name = product.Name,
-                Price = product.Price,
-                Stock = product.Stock,
-                User = product.User,
-            };
-        }
+        //Isto passou para os helpers
+        //private ProductViewModel ToProductViewModel(Product product)
+        //{
+        //    return new ProductViewModel
+        //    {
+        //        Id = product.Id,
+        //        ImageUrl = product.ImageUrl,
+        //        IsAvailable = product.IsAvailable,
+        //        LastPurchase = product.LastPurchase,
+        //        LastSale = product.LastSale,
+        //        Name = product.Name,
+        //        Price = product.Price,
+        //        Stock = product.Stock,
+        //        User = product.User,
+        //    };
+        //}
 
         // POST: Products/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
@@ -182,25 +201,31 @@ namespace ShopAmazing.Web.Controllers
 
                     if (model.ImageFile != null && model.ImageFile.Length > 0)//se existe upload ou nao, pode ou nao por imagem
                     {
-                        var guid = Guid.NewGuid().ToString();
-                        var file = $"{guid}.jpg";
 
 
-                        //a pessoa carrrega a imagem mas o caminho vai para dentro do atributo da bd no image url do products, mas o ficheiro vai para dentro da pasta images / products
-                        path = Path.Combine(
-                            Directory.GetCurrentDirectory(),//directoria do servidor
-                            "wwwroot\\images\\Products",//o caminho
-                            /*model.ImageFile.FileName*/ file);//nome do ficheiro
+                        path = await _imageHelper.UploadImageAsync(model.ImageFile, "Products");
 
-                        using (var stream = new FileStream(path, FileMode.Create))//cria o ficheiro
-                        {
-                            await model.ImageFile.CopyToAsync(stream); //atencao que depois temos de apagar o ficheiro da pasta das imagens
-                        }
 
-                        path = $"~/images/Products/{/*model.ImageFile.FileName*/ file}";//isto vai servir para guardar na base de dados o caminho da imagem ja guardada na pasta de imagens
+                        //var guid = Guid.NewGuid().ToString();
+                        //var file = $"{guid}.jpg";
+
+
+                        ////a pessoa carrrega a imagem mas o caminho vai para dentro do atributo da bd no image url do products, mas o ficheiro vai para dentro da pasta images / products
+                        //path = Path.Combine(
+                        //    Directory.GetCurrentDirectory(),//directoria do servidor
+                        //    "wwwroot\\images\\Products",//o caminho
+                        //    /*model.ImageFile.FileName*/ file);//nome do ficheiro
+
+                        //using (var stream = new FileStream(path, FileMode.Create))//cria o ficheiro
+                        //{
+                        //    await model.ImageFile.CopyToAsync(stream); //atencao que depois temos de apagar o ficheiro da pasta das imagens
+                        //}
+
+                        //path = $"~/images/Products/{/*model.ImageFile.FileName*/ file}";//isto vai servir para guardar na base de dados o caminho da imagem ja guardada na pasta de imagens
                     }
 
-                    var product = this.ToProduct(model, path);
+                    //var product = this.ToProduct(model, path);
+                    var product = _converterHelper.ToProduct(model, path, false);
 
                     //TODO: Change for logged user
                     product.User = await _userHelper.GetUserByEmailAsync("fjfigdev@gmail.com");
