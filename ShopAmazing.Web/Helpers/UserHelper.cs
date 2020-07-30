@@ -71,5 +71,15 @@ namespace ShopAmazing.Web.Helpers
         {
             return await _userManager.UpdateAsync(user);
         }
+
+
+
+        public async Task<SignInResult> ValidatePasswordAsync(User user, string password)
+        {
+            return await _signInManager.CheckPasswordSignInAsync(
+                user,
+                password,
+                false);//o ultimo parametro e para nao bloquear caso o user se engane na password.depois passa para o account
+        }
     }
 }

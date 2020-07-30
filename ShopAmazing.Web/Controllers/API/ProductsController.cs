@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ShopAmazing.Web.Data;
 
 namespace ShopAmazing.Web.Controllers.API//APi controller class empty na criacao
 {
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]//isto diz que a autenticacao e feita pelo token e nao um login tradicional / no final temos de criar o servico no startup
     [ApiController]
     public class ProductsController : Controller//Atencao mudar para controller so.O controller tb herda do controller base mas e mais especifico
     {

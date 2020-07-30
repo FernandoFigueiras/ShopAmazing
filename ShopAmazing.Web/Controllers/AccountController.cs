@@ -1,9 +1,15 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using ShopAmazing.Web.Data.Entities;
 using ShopAmazing.Web.Helpers;
 using ShopAmazing.Web.Models;
+using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ShopAmazing.Web.Controllers
@@ -13,12 +19,15 @@ namespace ShopAmazing.Web.Controllers
     public class AccountController : Controller
     {
         private readonly IUserHelper _userHelper;
+        private readonly IConfiguration _configuration;//configuracoes para ir buscar o token
 
-
-
-        public AccountController(IUserHelper userHelper)
+        public AccountController(
+            IUserHelper userHelper,
+            IConfiguration configuration//este configuration e para ir buscar as opcoes do token colocadas no Json
+            )
         {
             _userHelper = userHelper;
+            _configuration = configuration;
         }
 
 
@@ -213,6 +222,51 @@ namespace ShopAmazing.Web.Controllers
             }
 
             return View(model);
+        }
+
+
+
+        //isto vai ser usado na API, para proteger a API e depois ser consumido no mobile
+        [HttpPost] //Isto e so para gerar o Token, depois temos de ir a API proteger
+        public async Task<IActionResult> CreateToken([FromBody] LoginViewModel model)
+        {
+            if (this.ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByEmailAsync(model.UserName);
+                if (user != null)
+                {
+                    var result = await _userHelper.ValidatePasswordAsync(//validar a pass
+                        user,
+                        model.Password);
+
+                    if (result.Succeeded)//se o resultado for bem sucedido
+                    {
+                        var claims = new[]//perfil de utilizador mas mais complexo
+                        {
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                };
+
+                        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Tokens:Key"]));//isto acede ao jason
+                        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                        var token = new JwtSecurityToken(
+                            _configuration["Tokens:Issuer"],
+                            _configuration["Tokens:Audience"],
+                            claims,
+                            expires: DateTime.UtcNow.AddDays(15),//tempo em que o token pode expirar
+                            signingCredentials: credentials);
+                        var results = new
+                        {
+                            token = new JwtSecurityTokenHandler().WriteToken(token),
+                            expiration = token.ValidTo
+                        };
+
+                        return this.Created(string.Empty, results);
+                    }
+                }
+            }
+
+            return this.BadRequest();//se o user for null
         }
     }
 }

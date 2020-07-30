@@ -23,5 +23,7 @@ namespace ShopAmazing.Web.Helpers
         Task<IdentityResult> UpdateUserAsync(User user);
 
         Task<IdentityResult> ChangePasswordAsync(User user, string oldPassword, string newPassword);
+
+        Task<SignInResult> ValidatePasswordAsync(User user, string password);//para ver se a password esta correcta para gerar o token, (ver json) da o resultado
     }
 }
