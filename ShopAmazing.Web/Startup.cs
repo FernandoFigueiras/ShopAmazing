@@ -33,7 +33,7 @@ namespace ShopAmazing.Web
             //configurar a autenticacao e gestao dos users
             //aqui passamos o nosso user porque estendemos a class para juntar o first e last name, caso contrario passavamos apenas o IdentityUser
             services.AddIdentity<User, IdentityRole>(config =>
-            {    //quando passar para producao temos de mudar iusto
+            {    //quando passar para producao temos de mudar isto
                 config.User.RequireUniqueEmail = true;
                 config.Password.RequireDigit = false;
                 config.Password.RequiredUniqueChars = 0;
@@ -98,6 +98,7 @@ namespace ShopAmazing.Web
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseAuthentication();//Servico de autenticacao
             app.UseCookiePolicy();
 
             app.UseMvc(routes =>

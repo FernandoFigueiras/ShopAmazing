@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ShopAmazing.Web.Data;
-using ShopAmazing.Web.Data.Entities;
 using ShopAmazing.Web.Helpers;
 using ShopAmazing.Web.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ShopAmazing.Web.Controllers
 {
+
+    [Authorize]
     public class ProductsController : Controller
     {
         //private readonly DataContext _context;
@@ -23,7 +20,8 @@ namespace ShopAmazing.Web.Controllers
         private readonly IImageHelper _imageHelper;
         private readonly IConverterHelper _converterHelper;
 
-        public ProductsController(/*DataContext context*/ /*IRepository repository*/ IProductRepository productRepository,
+        public ProductsController(/*DataContext context*/ /*IRepository repository*/
+            IProductRepository productRepository,
             IUserHelper userHelper,
             IImageHelper imageHelper,
             IConverterHelper converterHelper)
@@ -64,14 +62,17 @@ namespace ShopAmazing.Web.Controllers
         }
 
         // GET: Products/Create
+        //[Authorize]
         public IActionResult Create()
         {
             return View();
         }
 
+
         // POST: Products/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(/*Product product*/ ProductViewModel model)
@@ -119,7 +120,8 @@ namespace ShopAmazing.Web.Controllers
 
                 //por o user no product
                 //TODO: Change for logged user
-                product.User = await _userHelper.GetUserByEmailAsync("fjfigdev@gmail.com");
+                //product.User = await _userHelper.GetUserByEmailAsync("fjfigdev@gmail.com");
+                product.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);//Aqui ja vai buscar o user que esta logado
 
 
                 //_repository.AddProduct(product);
@@ -149,6 +151,7 @@ namespace ShopAmazing.Web.Controllers
         //}
 
         // GET: Products/Edit/5
+        //[Authorize]
         public async Task<IActionResult> Edit(int? id)//queremos que a imagem ja esteja la quando se vai a view
         {
             if (id == null)
@@ -228,7 +231,8 @@ namespace ShopAmazing.Web.Controllers
                     var product = _converterHelper.ToProduct(model, path, false);
 
                     //TODO: Change for logged user
-                    product.User = await _userHelper.GetUserByEmailAsync("fjfigdev@gmail.com");
+                    //product.User = await _userHelper.GetUserByEmailAsync("fjfigdev@gmail.com");
+                    product.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);//Aqui esta o user que esta logado
                     //temos de por aqui porque caso corra mal no get como na view nao aparece campo nenhum para editar chamamos novamente o User
                     //se falhar a validacao do GET temos de chamar de novo a validacao
 
@@ -254,6 +258,7 @@ namespace ShopAmazing.Web.Controllers
         }
 
         // GET: Products/Delete/5
+        //[Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

@@ -13,7 +13,7 @@ namespace ShopAmazing.Web.Data.Entities
         public string Name { get; set; }
 
 
-        public decimal Price { get; set; }
+        public decimal Price { get; set; }//por caus das casas decimais temos de fazer o modelo no data context
 
 
         [Display(Name = "Image")]

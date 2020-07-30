@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using ShopAmazing.Web.Data.Entities;
+using ShopAmazing.Web.Models;
 using System.Threading.Tasks;
 
 namespace ShopAmazing.Web.Helpers
@@ -12,5 +13,11 @@ namespace ShopAmazing.Web.Helpers
 
         //este metodo pesquisa por um user pelo email, que neste exemplo em especifico e tb o username
         Task<User> GetUserByEmailAsync(string email);
+
+
+
+        Task<SignInResult> LoginAsync(LoginViewModel model);//classe que deriva do signinmanager que diz se fez ou nao passando o LogInViewModel
+
+        Task LogOutAsync();
     }
 }
