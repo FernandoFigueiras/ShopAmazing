@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace ShopAmazing.Web.Controllers
 {
-
-    [Authorize]
+    //se colocarmos o authorize aqui ele so entra se tiver aqui disponivel com os roles
+    //[Authorize]
     public class ProductsController : Controller
     {
         //private readonly DataContext _context;
@@ -62,7 +62,7 @@ namespace ShopAmazing.Web.Controllers
         }
 
         // GET: Products/Create
-        //[Authorize]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -151,7 +151,7 @@ namespace ShopAmazing.Web.Controllers
         //}
 
         // GET: Products/Edit/5
-        //[Authorize]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Edit(int? id)//queremos que a imagem ja esteja la quando se vai a view
         {
             if (id == null)
@@ -258,7 +258,8 @@ namespace ShopAmazing.Web.Controllers
         }
 
         // GET: Products/Delete/5
-        //[Authorize]
+        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin, Customer")]Mais do que um role
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

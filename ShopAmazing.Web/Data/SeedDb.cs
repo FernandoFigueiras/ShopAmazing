@@ -28,12 +28,18 @@ namespace ShopAmazing.Web.Data
             await _context.Database.EnsureCreatedAsync();
 
 
+            //fazer os roles com metodo criado por nos para fazer o bypass //Quem estipula os Roles somos nos
+            await _userHelper.CheckRoleAsync("Admin");//verificar se ja existem os dois roles
+            await _userHelper.CheckRoleAsync("Customer");
+
+
             //antes de inserir prtodutos temos de ver se ja ha user e se nao criamos
             //var user = await _userManager.FindByEmailAsync("fjfigdev@gmail.com");
             var user = await _userHelper.GetUserByEmailAsync("fjfigdev@gmail.com");
 
             if (user == null)
             {
+
                 user = new User
                 {
                     FirstName = "Fernando",
@@ -51,6 +57,15 @@ namespace ShopAmazing.Web.Data
                 {
                     throw new InvalidOperationException("The User could not be created in seeder");
                 }
+            }
+
+
+            var isInRole = await _userHelper.IsUserInRoleAsync(user, "Admin");
+
+
+            if (!isInRole)
+            {
+                await _userHelper.AddUserToRoleAsync(user, "Admin");
             }
 
 

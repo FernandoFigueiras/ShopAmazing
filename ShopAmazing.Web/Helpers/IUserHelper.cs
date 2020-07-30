@@ -11,6 +11,8 @@ namespace ShopAmazing.Web.Helpers
         //O identityResult retorna a informacao se consegiu criar ou nao (bool)
         Task<IdentityResult> AddUserAsync(User user, string password);//vai servir para criar utilizador e fazer o bypass do createasync do usermanager
 
+
+
         //este metodo pesquisa por um user pelo email, que neste exemplo em especifico e tb o username
         Task<User> GetUserByEmailAsync(string email);
 
@@ -18,12 +20,32 @@ namespace ShopAmazing.Web.Helpers
 
         Task<SignInResult> LoginAsync(LoginViewModel model);//classe que deriva do signinmanager que diz se fez ou nao passando o LogInViewModel
 
+
+
         Task LogOutAsync();
+
+
 
         Task<IdentityResult> UpdateUserAsync(User user);
 
+
+
         Task<IdentityResult> ChangePasswordAsync(User user, string oldPassword, string newPassword);
 
+
+
         Task<SignInResult> ValidatePasswordAsync(User user, string password);//para ver se a password esta correcta para gerar o token, (ver json) da o resultado
+
+
+
+        Task CheckRoleAsync(string roleName);
+
+
+
+        Task<bool> IsUserInRoleAsync(User user, string roleName);
+
+
+
+        Task AddUserToRoleAsync(User user, string roleName);
     }
 }
