@@ -10,6 +10,7 @@ namespace ShopAmazing.Web.Helpers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
 
+
         public UserHelper(
             UserManager<User> userManager,
             SignInManager<User> signInManager)//Nao precisamos de injectar a datacontext porque ja vai buscar a IdentityDbContext que e especifica para os users
@@ -20,6 +21,7 @@ namespace ShopAmazing.Web.Helpers
 
 
 
+
         public async Task<IdentityResult> AddUserAsync(User user, string password)
         {
             return await _userManager.CreateAsync(user, password);//bypass que usa o usermanager mas a partir daqui. Coisas a acrescentar ou alterar a class pode ser feita atravez daqui
@@ -27,10 +29,20 @@ namespace ShopAmazing.Web.Helpers
 
 
 
+
+        public async Task<IdentityResult> ChangePasswordAsync(User user, string oldPassword, string newPassword)
+        {
+            return await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+        }
+
+
+
+
         public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
         }
+
 
 
 
@@ -43,11 +55,21 @@ namespace ShopAmazing.Web.Helpers
                 false);//este parametro define quantas tentativas ele bloqueia sem conseguir entrar
         }
 
+
+
         //isto leva o controlador account
 
         public async Task LogOutAsync()
         {
             await _signInManager.SignOutAsync();
+        }
+
+
+
+
+        public async Task<IdentityResult> UpdateUserAsync(User user)
+        {
+            return await _userManager.UpdateAsync(user);
         }
     }
 }

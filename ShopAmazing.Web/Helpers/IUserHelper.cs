@@ -19,5 +19,9 @@ namespace ShopAmazing.Web.Helpers
         Task<SignInResult> LoginAsync(LoginViewModel model);//classe que deriva do signinmanager que diz se fez ou nao passando o LogInViewModel
 
         Task LogOutAsync();
+
+        Task<IdentityResult> UpdateUserAsync(User user);
+
+        Task<IdentityResult> ChangePasswordAsync(User user, string oldPassword, string newPassword);
     }
 }
