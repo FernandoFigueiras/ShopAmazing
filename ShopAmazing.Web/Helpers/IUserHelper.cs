@@ -47,5 +47,25 @@ namespace ShopAmazing.Web.Helpers
 
 
         Task AddUserToRoleAsync(User user, string roleName);
+
+
+
+        Task<string> GenerateEmailConfirmationTokenAsync(User user);//vai gerar o email de confirmacao que vai mandar ao user com o token (manda email para o user confirmar)
+
+
+
+        Task<IdentityResult> ConfirmEmailAsync(User user, string token);//quando o user mandar o email de confirmacao vai ver se o user bate com o token e deixa entar (recebe email de confirmacao do user)
+
+
+
+        Task<User> GetUserByIdAsync(string userId);//este vai buscar o user pelo id
+
+
+
+        Task<string> GeneratePasswordResetTokenAsync(User user);
+
+
+
+        Task<IdentityResult> ResetPasswordAsync(User user, string token, string password);
     }
 }

@@ -63,6 +63,11 @@ namespace ShopAmazing.Web.Data
             var isInRole = await _userHelper.IsUserInRoleAsync(user, "Admin");
 
 
+            //cria o tokn e confirma
+            var token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+            await _userHelper.ConfirmEmailAsync(user, token);
+
+
             if (!isInRole)
             {
                 await _userHelper.AddUserToRoleAsync(user, "Admin");

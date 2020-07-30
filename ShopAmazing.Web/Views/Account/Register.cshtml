@@ -46,6 +46,11 @@
     </div>
 </div>
 
+<div class="text-success">
+    <p>
+        @ViewBag.Message<!--Isto e para aparecer o texto de sucesso do envio do email do account controller-->
+    </p>
+</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

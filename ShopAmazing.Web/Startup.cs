@@ -36,6 +36,8 @@ namespace ShopAmazing.Web
             //aqui passamos o nosso user porque estendemos a class para juntar o first e last name, caso contrario passavamos apenas o IdentityUser
             services.AddIdentity<User, IdentityRole>(config =>
             {    //quando passar para producao temos de mudar isto
+                config.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;//token do Core que tem a ver com a autenticacao do core
+                config.SignIn.RequireConfirmedEmail = true;//aqui precisa do email de confirmacao que recebe um token e depois de clicado o link devolve o token para validar
                 config.User.RequireUniqueEmail = true;
                 config.Password.RequireDigit = false;
                 config.Password.RequiredUniqueChars = 0;
@@ -44,6 +46,7 @@ namespace ShopAmazing.Web
                 config.Password.RequireNonAlphanumeric = false;
                 config.Password.RequiredLength = 6;
             })
+                .AddDefaultTokenProviders() //extention methods chamar um e depois o outro
                 .AddEntityFrameworkStores<DataContext>();
 
 
@@ -82,6 +85,7 @@ namespace ShopAmazing.Web
             services.AddScoped<IUserHelper, UserHelper>();//Bypass do UserManager do core que nao usamos directamente
             services.AddScoped<IImageHelper, ImageHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
+            services.AddScoped<IMailHelper, MailHelper>();
 
             //teste Mock
             //services.AddScoped<IRepository, MockRepository>();

@@ -61,12 +61,42 @@ namespace ShopAmazing.Web.Helpers
 
 
 
+        public async Task<IdentityResult> ConfirmEmailAsync(User user, string token)
+        {
+            return await _userManager.ConfirmEmailAsync(user, token);//devolve um identityResult se bate certo ou nao
+        }
+
+
+
+
+        public async Task<string> GenerateEmailConfirmationTokenAsync(User user)
+        {
+            return await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        }
+
+
+
+
+        public async Task<string> GeneratePasswordResetTokenAsync(User user)
+        {
+            return await _userManager.GeneratePasswordResetTokenAsync(user);//faz o token quando se quiser fazer o reset da password
+        }
+
+
+
 
         public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
         }
 
+
+
+
+        public async Task<User> GetUserByIdAsync(string userId)
+        {
+            return await _userManager.FindByIdAsync(userId);
+        }
 
 
 
@@ -97,6 +127,13 @@ namespace ShopAmazing.Web.Helpers
             await _signInManager.SignOutAsync();
         }
 
+
+
+
+        public async Task<IdentityResult> ResetPasswordAsync(User user, string token, string password)
+        {
+            return await _userManager.ResetPasswordAsync(user, token, password);
+        }
 
 
 

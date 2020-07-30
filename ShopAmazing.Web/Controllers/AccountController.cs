@@ -20,14 +20,17 @@ namespace ShopAmazing.Web.Controllers
     {
         private readonly IUserHelper _userHelper;
         private readonly IConfiguration _configuration;//configuracoes para ir buscar o token
+        private readonly IMailHelper _mailHelper;
 
         public AccountController(
             IUserHelper userHelper,
-            IConfiguration configuration//este configuration e para ir buscar as opcoes do token colocadas no Json
+            IConfiguration configuration,//este configuration e para ir buscar as opcoes do token colocadas no Json
+            IMailHelper mailHelper
             )
         {
             _userHelper = userHelper;
             _configuration = configuration;
+            _mailHelper = mailHelper;
         }
 
 
@@ -96,6 +99,7 @@ namespace ShopAmazing.Web.Controllers
                         Email = model.Username,
                         UserName = model.Username,
                     };
+
                     //adicionar a base de dados
                     var result = await _userHelper.AddUserAsync(user, model.Password);
 
@@ -108,31 +112,81 @@ namespace ShopAmazing.Web.Controllers
 
                     //caso consiga criar regista e entre logo
                     //so neste caso, mas depois alteramos
-                    var loginViewModel = new LoginViewModel
-                    {
-                        Password = model.Password,
-                        RememberMe = false,
-                        UserName = model.Username,
-                    };
+                    //var loginViewModel = new LoginViewModel   substituido pelo email que se manda para confirmar
+                    //{
+                    //    Password = model.Password,
+                    //    RememberMe = false,
+                    //    UserName = model.Username,
+                    //};
 
                     //autenticar
-                    var result2 = await _userHelper.LoginAsync(loginViewModel);
+                    //var result2 = await _userHelper.LoginAsync(loginViewModel);
 
-                    if (result2.Succeeded)
-                    {
-                        return this.RedirectToAction("Index", "Home");
-                    }
+                    //if (result2.Succeeded)
+                    //{
+                    //    return this.RedirectToAction("Index", "Home");
+                    //}
 
                     //se o login nao correu bem
 
-                    this.ModelState.AddModelError(string.Empty, "The user couldn't be login");
+                    //this.ModelState.AddModelError(string.Empty, "The user couldn't be login");
+
+
+                    //tudo o que esta acima que era o login saiu porque se manda o email com o token para confirmacao de registo
+
+                    var myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+
+                    //criar um link que la dentro leva uma action que vai em formato link e ele vai no controlador acount executar a action confirm email que eu tenho no controller
+                    //ou seja vai o link da action e no link ele vai ao controllador account procurar a action ConfirmEmail
+                    var tokenLink = this.Url.Action("ConfirmEmail", "Account", new
+                    {
+                        userid = user.Id,
+                        token = myToken,
+                    }, protocol: HttpContext.Request.Scheme);
+
+
+                    //to, subject, body
+                    _mailHelper.SendMail(model.Username, "Email confirmation", $"<h1>Email Confirmation</h1>" +
+                      $"To allow the user, " +
+                      $"plase click in this link:</br></br><a href = \"{tokenLink}\">Confirm Email</a>");
+
+                    //ISto e para a view do registo ter la informcao que foi enviado email com registo
+                    this.ViewBag.Message = "The instructions to allow your user has been sent to email.";
+
+
                     return this.View(model);
                 }
                 this.ModelState.AddModelError(string.Empty, "The user allready exists");
-                return this.View(model);
+                //return this.View(model);
             }
             return View(model);
         } 
+
+        //esta e a action que devolve do email de confirmcao do cliente que esta criado em cima
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+            {
+                return NotFound();
+            }
+
+            var user = await _userHelper.GetUserByIdAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var result = await _userHelper.ConfirmEmailAsync(user, token);
+
+            if (!result.Succeeded)
+            {
+                return NotFound();
+            }
+
+            return View();
+        }
+
 
 
         public async Task<IActionResult> ChangeUser()
@@ -267,6 +321,80 @@ namespace ShopAmazing.Web.Controllers
             }
 
             return this.BadRequest();//se o user for null
+        }
+
+
+
+        public IActionResult RecoverPassword()
+        {
+            return View();
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> RecoverPassword(RecoverPasswordViewModel model)
+        {
+            if (this.ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, "The email doesn't correspont to a registered user.");
+                    return this.View(model);
+                }
+
+                var myToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
+
+                var link = this.Url.Action(
+                    "ResetPassword",
+                    "Account",
+                    new { token = myToken }, protocol: HttpContext.Request.Scheme);
+
+
+                _mailHelper.SendMail(model.Email, "ShopAmazing Password Reset", $"<h1>Shop Password Reset</h1>" +
+                $"To reset the password click in this link:</br></br>" +
+                $"<a href = \"{link}\">Reset Password</a>");
+
+
+                this.ViewBag.Message = "The instructions to recover your password has been sent to email.";
+
+
+                return this.View();
+
+            }
+
+            return this.View(model);
+        }
+
+
+
+        public IActionResult ResetPassword(string token)
+        {
+            return View();
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(model.UserName);
+            if (user != null)
+            {
+                var result = await _userHelper.ResetPasswordAsync(user, model.Token, model.Password);
+                if (result.Succeeded)
+                {
+                    this.ViewBag.Message = "Password reset successful.";
+                    return this.View();
+                }
+
+                this.ViewBag.Message = "Error while resetting the password.";
+                return View(model);
+            }
+
+            this.ViewBag.Message = "User not found.";
+            return View(model);
         }
     }
 }
