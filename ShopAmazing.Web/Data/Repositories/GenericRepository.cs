@@ -3,7 +3,7 @@ using ShopAmazing.Web.Data.Entities;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ShopAmazing.Web.Data
+namespace ShopAmazing.Web.Data.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class, IEntity //uma classe generica de T com os metodos do nterface em que todos os T que sao classes implementam a IEntity, dai ele saber quais as classes que implementam
     {

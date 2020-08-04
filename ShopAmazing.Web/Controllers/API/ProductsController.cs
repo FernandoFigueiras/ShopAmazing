@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShopAmazing.Web.Data;
+using ShopAmazing.Web.Data.Repositories;
 
 namespace ShopAmazing.Web.Controllers.API//APi controller class empty na criacao
 {

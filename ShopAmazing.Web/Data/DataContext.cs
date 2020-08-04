@@ -13,6 +13,19 @@ namespace ShopAmazing.Web.Data
         public DbSet<Country> Countries { get; set; }//Um db set de cada entidade 
 
 
+
+        public DbSet<Order> Orders { get; set; }
+
+
+
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+
+
+
+        public DbSet<OrderDetailTemp> OrderDetailsTemp { get; set; }
+
+
+
         public DataContext(DbContextOptions<DataContext> options) : base(options)//Isto sao as opcoes do EntityFramework
         {
         }
@@ -24,7 +37,21 @@ namespace ShopAmazing.Web.Data
             modelBuilder.Entity<Product>()
                 .Property(p => p.Price)
                 .HasColumnType("decimal(18,2)");//Isto e para alterar as definicoes do valor do price
-            //Isto deixa de dar o worning
+                                                //Isto deixa de dar o worning
+
+
+
+            modelBuilder.Entity<OrderDetail>()
+               .Property(p => p.Price)
+               .HasColumnType("decimal(18,2)");
+
+
+
+
+            modelBuilder.Entity<OrderDetailTemp>()
+               .Property(p => p.Price)
+               .HasColumnType("decimal(18,2)");
+
 
 
             //Cascading Delete Rule

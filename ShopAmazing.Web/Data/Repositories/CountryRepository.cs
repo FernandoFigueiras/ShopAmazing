@@ -1,6 +1,6 @@
 ﻿using ShopAmazing.Web.Data.Entities;
 
-namespace ShopAmazing.Web.Data
+namespace ShopAmazing.Web.Data.Repositories
 {
     public class CountryRepository : GenericRepository<Country>, ICountryRepository
     {

@@ -15,9 +15,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using ShopAmazing.Web.Data;
+using ShopAmazing.Web.Data.Repositories;
 using ShopAmazing.Web.Data.Entities;
 using ShopAmazing.Web.Helpers;
+using ShopAmazing.Web.Data;
 
 namespace ShopAmazing.Web
 {
@@ -83,10 +84,16 @@ namespace ShopAmazing.Web
             /*services.AddScoped<IRepository, Repository>();*///Injectar o repositorio. em scoped porque ele e chamado sempre que se efectura uma action O startup compila e ve o interface e depois chama a class
             services.AddScoped<IProductRepository, ProductRepository>();//repositorio generico aplicado ao produto
             services.AddScoped<ICountryRepository, CountryRepository>();//repositorio generico aplicado ao Country
+            services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IUserHelper, UserHelper>();//Bypass do UserManager do core que nao usamos directamente
             services.AddScoped<IImageHelper, ImageHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
             services.AddScoped<IMailHelper, MailHelper>();
+            
+
+
+
+
 
             //teste Mock
             //services.AddScoped<IRepository, MockRepository>();

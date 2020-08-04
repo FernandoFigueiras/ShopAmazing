@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ShopAmazing.Web.Data
+namespace ShopAmazing.Web.Data.Repositories
 {
     public interface IRepository
     {

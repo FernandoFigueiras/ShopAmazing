@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ShopAmazing.Web.Data;
+using ShopAmazing.Web.Data.Repositories;
 using ShopAmazing.Web.Helpers;
 using ShopAmazing.Web.Models;
 using System.Linq;

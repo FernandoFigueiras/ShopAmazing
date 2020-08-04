@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 
-namespace ShopAmazing.Web.Data
+namespace ShopAmazing.Web.Data.Repositories
 {
     public interface IGenericRepository<T> where T : class //serve para qualquer classe, por isso e de tipo T em que T e classe
     {

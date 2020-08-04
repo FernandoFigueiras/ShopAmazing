@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ShopAmazing.Web.Data
+namespace ShopAmazing.Web.Data.Repositories
 {
     public class MockRepository : IRepository
     {
