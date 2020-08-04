@@ -36,6 +36,16 @@ namespace ShopAmazing.Web.Data
         //Isto altera as definicoes de criacao do modelo da base de dados./introduzir alguma coisa ao modelo sem ser pela entity framework.
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            //Isto cria um indice para nao por um nome de pais que ja existe
+            modelBuilder.Entity<Country>()
+                .HasIndex(c => c.Name)
+                .IsUnique();
+
+            modelBuilder.Entity<City>()
+                .HasIndex(c => c.Name)
+                .IsUnique();
+
             modelBuilder.Entity<Product>()
                 .Property(p => p.Price)
                 .HasColumnType("decimal(18,2)");//Isto e para alterar as definicoes do valor do price

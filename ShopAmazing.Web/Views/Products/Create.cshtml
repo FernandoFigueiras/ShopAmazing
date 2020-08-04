@@ -14,7 +14,12 @@
         <form asp-action="Create" enctype="multipart/form-data">
             <!--Isto diz que este form recebe um ficheiro o enctype-->
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+
+            <partial name="_ProductsPartial"/>
+
+
+
+            @*<div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
@@ -24,14 +29,14 @@
                 <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
-            @*<div class="form-group">
+            <div class="form-group">
                 <label asp-for="ImageUrl" class="control-label"></label>
                 <input asp-for="ImageUrl" class="form-control" />
                 <span asp-validation-for="ImageUrl" class="text-danger"></span>
-            </div>*@
+            </div>
         <div class="form-group">
             <label asp-for="ImageFile" class="control-label"></label>
-            <input asp-for="ImageFile" class="form-control" type="file" /> <!--ype="file" para passar a ser uma caixa de upload em vez de uma caixa de texto-->
+            <input asp-for="ImageFile" class="form-control" type="file" /> ype="file" para passar a ser uma caixa de upload em vez de uma caixa de texto
             <span asp-validation-for="ImageFile" class="text-danger"></span>
         </div>
             <div class="form-group">
@@ -55,7 +60,7 @@
                 <label asp-for="Stock" class="control-label"></label>
                 <input asp-for="Stock" class="form-control" />
                 <span asp-validation-for="Stock" class="text-danger"></span>
-            </div>
+            </div>*@
             <div class="form-group">
                 <button type="submit" class="btn btn-primary"><i class="fa fa-save"> Create</i></button>
                 <a asp-action="Index" class="btn btn-success"><i class="fa fa-chevron-left"> Back to List</i></a>

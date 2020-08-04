@@ -176,7 +176,7 @@ namespace ShopAmazing.Web.Controllers
 
                     //throw e;//para ver o erro
 
-                    if (ex.InnerException.Message.Contains("duplicate"))
+                    if (ex.InnerException.Message.Contains("duplicate"))//Isto e quando da erro de insercao duplicada. neste caso vemos os erros de SQL para corrigir
                     {
                         ModelState.AddModelError(string.Empty, "Already there is a country with that name!!");
                     }
