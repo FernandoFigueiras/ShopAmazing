@@ -46,7 +46,7 @@ namespace ShopAmazing.Web.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");//Isto vai chamar a view do not found que esta na classe NotFoundViewResult nos helpers
             }
 
 
@@ -55,7 +55,7 @@ namespace ShopAmazing.Web.Controllers
             var product = await _productRepository.GetByIdAsync(id.Value);
             if (product == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             return View(product);
@@ -72,7 +72,7 @@ namespace ShopAmazing.Web.Controllers
         // POST: Products/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(/*Product product*/ ProductViewModel model)
@@ -151,19 +151,19 @@ namespace ShopAmazing.Web.Controllers
         //}
 
         // GET: Products/Edit/5
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)//queremos que a imagem ja esteja la quando se vai a view
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             //var product = _repository.GetProduct(id.Value);
             var product = await _productRepository.GetByIdAsync(id.Value);
             if (product == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             //var model = this.ToProductViewModel(product);//Queremos que a view ja tenha a imagem
@@ -245,7 +245,7 @@ namespace ShopAmazing.Web.Controllers
                 {
                     if (!await _productRepository.ExistsAsync(model.Id))
                     {
-                        return NotFound();
+                        return new NotFoundViewResult("ProductNotFound");
                     }
                     else
                     {
@@ -264,14 +264,14 @@ namespace ShopAmazing.Web.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             //var product = _repository.GetProduct(id.Value);
             var product = await _productRepository.GetByIdAsync(id.Value);
             if (product == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             return View(product);
@@ -289,6 +289,13 @@ namespace ShopAmazing.Web.Controllers
             var product = await _productRepository.GetByIdAsync(id);
             await _productRepository.DeleteAsync(product);
             return RedirectToAction(nameof(Index));
+        }
+
+
+
+        public IActionResult ProductNotFound()
+        {
+            return View();
         }
     }
 }

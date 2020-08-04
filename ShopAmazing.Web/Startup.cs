@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ShopAmazing.Web.Data;
 using ShopAmazing.Web.Data.Entities;
@@ -99,6 +100,18 @@ namespace ShopAmazing.Web
             });
 
 
+
+            services.ConfigureApplicationCookie(Options =>
+            {
+
+                Options.LoginPath = "/Account/NotAuthorized"; //Isto e para substituir o caminho do path para o login caso o user anonimo nao tenha permissoes.
+
+                Options.AccessDeniedPath = "/Account/NotAuthorized";//quando isto acontecer vamos ao controlador chamar a action
+
+            });
+
+
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
@@ -114,6 +127,15 @@ namespace ShopAmazing.Web
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
+
+
+            //Isto e para configurar o not found da URL midleware
+
+            app.UseStatusCodePagesWithReExecute("/error/{0}");//quando ele procura o controlador que nao existe em vez de passar a pagina de default 404 ele vai tornar a executar o controlador e mostrar a nossa view
+            //depois temos de criar no homecontroller, parametro e o que vem do controlador que e dado pela route
+
+
+
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

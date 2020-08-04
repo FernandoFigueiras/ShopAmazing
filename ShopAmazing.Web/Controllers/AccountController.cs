@@ -46,6 +46,7 @@ namespace ShopAmazing.Web.Controllers
         }
 
 
+
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)//Aqui temos de acionar o servico de autenticacao no startup.
         {
@@ -69,6 +70,7 @@ namespace ShopAmazing.Web.Controllers
         }
 
 
+
         public async Task<IActionResult> Logout()
         {
             await _userHelper.LogOutAsync();
@@ -76,10 +78,14 @@ namespace ShopAmazing.Web.Controllers
         }
 
 
+
+
         public IActionResult Register()
         {
             return this.View();
         }
+
+
 
 
         [HttpPost]
@@ -162,6 +168,8 @@ namespace ShopAmazing.Web.Controllers
             return View(model);
         } 
 
+
+
         //esta e a action que devolve do email de confirmcao do cliente que esta criado em cima
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
@@ -189,6 +197,7 @@ namespace ShopAmazing.Web.Controllers
 
 
 
+
         public async Task<IActionResult> ChangeUser()
         {
             var user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);//Ir buscar o user que esta logado
@@ -204,6 +213,7 @@ namespace ShopAmazing.Web.Controllers
 
             return View(model);
         }
+
 
 
         [HttpPost]
@@ -280,6 +290,7 @@ namespace ShopAmazing.Web.Controllers
 
 
 
+
         //isto vai ser usado na API, para proteger a API e depois ser consumido no mobile
         [HttpPost] //Isto e so para gerar o Token, depois temos de ir a API proteger
         public async Task<IActionResult> CreateToken([FromBody] LoginViewModel model)
@@ -325,10 +336,14 @@ namespace ShopAmazing.Web.Controllers
 
 
 
+
+
         public IActionResult RecoverPassword()
         {
             return View();
         }
+
+
 
 
 
@@ -369,10 +384,14 @@ namespace ShopAmazing.Web.Controllers
 
 
 
+
+
         public IActionResult ResetPassword(string token)
         {
             return View();
         }
+
+
 
 
 
@@ -395,6 +414,14 @@ namespace ShopAmazing.Web.Controllers
 
             this.ViewBag.Message = "User not found.";
             return View(model);
+        }
+
+
+
+
+        public IActionResult NotAuthorized()
+        {
+            return View();
         }
     }
 }
