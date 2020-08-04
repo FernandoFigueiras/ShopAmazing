@@ -13,6 +13,8 @@ namespace ShopAmazing.Web.Data
         public DbSet<Country> Countries { get; set; }//Um db set de cada entidade 
 
 
+        public DbSet<City> Cities { get; set; }
+
 
         public DbSet<Order> Orders { get; set; }
 

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Internal;
 using ShopAmazing.Web.Data.Entities;
 using ShopAmazing.Web.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -33,6 +35,27 @@ namespace ShopAmazing.Web.Data
             await _userHelper.CheckRoleAsync("Customer");
 
 
+
+            if (!_context.Countries.Any())
+            {
+                var cities = new List<City>();
+
+                cities.Add(new City { Name = "Lisboa" });
+                cities.Add(new City { Name = "Porto" });
+                cities.Add(new City { Name = "Faro" });
+                cities.Add(new City { Name = "Coimbra" });
+
+                _context.Countries.Add(new Country
+                {
+                    Cities = cities,
+                    Name = "Prtugal"
+                });
+
+
+                await _context.SaveChangesAsync();
+            }
+
+
             //antes de inserir prtodutos temos de ver se ja ha user e se nao criamos
             //var user = await _userManager.FindByEmailAsync("fjfigdev@gmail.com");
             var user = await _userHelper.GetUserByEmailAsync("fjfigdev@gmail.com");
@@ -46,6 +69,9 @@ namespace ShopAmazing.Web.Data
                     LastName = "Figueiras",
                     Email = "fjfigdev@gmail.com",
                     UserName = "fjfigdev@gmail.com",//podemos preencher mais campos
+                    Address = "Rua Maravilha 2Dto",
+                    CityId = _context.Countries.FirstOrDefault().Cities.FirstOrDefault().Id,
+                    City = _context.Countries.FirstOrDefault().Cities.FirstOrDefault(),
                 };
 
                 //agora mandamos o UserManager Criar o User.

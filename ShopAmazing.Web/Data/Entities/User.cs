@@ -7,10 +7,33 @@ namespace ShopAmazing.Web.Data.Entities
     {   //extendemos a classe do Core
 
         //atencao que como estamos a usar o IdentityUser temos de mudar o Data Context e usar um proprio para a autenticacao
+        [MaxLength(50, ErrorMessage = "The field {0 }only can contain {1} characters")]
         public string FirstName { get; set; }
 
 
+
+        [MaxLength(50, ErrorMessage = "The field {0 }only can contain {1} characters")]
         public string LastName { get; set; }
+
+
+
+
+        [MaxLength(100, ErrorMessage = "The field {0 }only can contain {1} characters")]
+        public string Address { get; set; }
+
+
+
+
+        public int CityId { get; set; }
+
+
+
+
+
+        public City City { get; set; }
+
+
+
 
 
         [Display(Name ="Full Name")]
