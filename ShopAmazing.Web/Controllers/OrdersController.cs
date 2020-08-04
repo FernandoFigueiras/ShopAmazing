@@ -64,5 +64,70 @@ namespace ShopAmazing.Web.Controllers
 
             return View(model);
         }
+
+
+
+
+        public async Task<IActionResult> DeleteItem(int? id)//Este e o nome que sta no botao create do orders
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+
+            await _orderRepository.DeleteDetailTempAsync(id.Value);
+
+
+            return this.RedirectToAction(nameof(Create));
+        }
+
+
+
+
+        public async Task<IActionResult> Increase(int? id)//Este e o nome que sta no botao create do orders
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+
+            await _orderRepository.ModifyOrderDetailTempQuantityAsync(id.Value, 1);//aumenta de um em um ver orderRepository
+
+
+            return this.RedirectToAction(nameof(Create));
+        }
+
+
+        public async Task<IActionResult> Decrease(int? id)//Este e o nome que sta no botao create do orders
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+
+            await _orderRepository.ModifyOrderDetailTempQuantityAsync(id.Value, -1);//diminui de um em um ver orderRepository
+
+
+            return this.RedirectToAction(nameof(Create));
+        }
+
+
+
+
+        public async Task<IActionResult> ConfirmOrder()
+        {
+            var response = await _orderRepository.ConfirmOrderAsync(this.User.Identity.Name);
+
+
+            if (response)//esta no OrderRepository devolve um bool
+            {
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            return this.RedirectToAction(nameof(Create));
+        }
     }
 }

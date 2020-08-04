@@ -39,6 +39,9 @@ namespace ShopAmazing.Web.Data.Entities
 
 
 
+        [DisplayFormat(DataFormatString = "{0:N0}")]
+        public int Lines { get { return this.Items == null ? 0 : this.Items.Count(); } }
+
 
         [DisplayFormat(DataFormatString = "{0:N2}")]
         public double Quantity
@@ -58,6 +61,23 @@ namespace ShopAmazing.Web.Data.Entities
             get
             {
                 return this.Items == null ? 0 : this.Items.Sum(i => i.Value);//vai agarrar nos items e soma o valor
+            }
+        }
+
+
+
+        [Display(Name = "Order Date")]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm tt}", ApplyFormatInEditMode = false)]
+        public DateTime? OrderDateLocal
+        {
+            get
+            {
+                if (this.OrderDate == null)
+                {
+                    return null;
+                }
+
+                return this.OrderDate.ToLocalTime();
             }
         }
 
