@@ -48,7 +48,7 @@ namespace ShopAmazing.Web.Data
                 _context.Countries.Add(new Country
                 {
                     Cities = cities,
-                    Name = "Prtugal"
+                    Name = "Portugal"
                 });
 
 

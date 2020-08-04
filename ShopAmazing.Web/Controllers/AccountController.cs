@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using ShopAmazing.Web.Data.Entities;
+using ShopAmazing.Web.Data.Repositories;
 using ShopAmazing.Web.Helpers;
 using ShopAmazing.Web.Models;
 using System;
@@ -21,16 +22,19 @@ namespace ShopAmazing.Web.Controllers
         private readonly IUserHelper _userHelper;
         private readonly IConfiguration _configuration;//configuracoes para ir buscar o token
         private readonly IMailHelper _mailHelper;
+        private readonly ICountryRepository _countryRepository;
 
         public AccountController(
             IUserHelper userHelper,
             IConfiguration configuration,//este configuration e para ir buscar as opcoes do token colocadas no Json
-            IMailHelper mailHelper
+            IMailHelper mailHelper,
+            ICountryRepository countryRepository
             )
         {
             _userHelper = userHelper;
             _configuration = configuration;
             _mailHelper = mailHelper;
+            _countryRepository = countryRepository;
         }
 
 
@@ -80,11 +84,23 @@ namespace ShopAmazing.Web.Controllers
 
 
 
+        //public IActionResult Register()
+        //{
+        //    return this.View();
+        //}
+
+
         public IActionResult Register()
         {
-            return this.View();
-        }
+            var model = new RegisterNewUserViewModel
+            {
+                Countries = _countryRepository.GetComboCountries(),
+                Cities = _countryRepository.GetComboCities(0),//Passamos o zreo para nao fazer nada enquanto o pais nao tiver nada para preencher as cidades do pais
+            };
 
+
+            return View(model);
+        }
 
 
 
@@ -98,12 +114,21 @@ namespace ShopAmazing.Web.Controllers
                 //se o user nao existe
                 if (user==null)
                 {
+
+                    var city = await _countryRepository.GetCityAsync(model.CityId);
+
+
+
                     user = new User
                     {
                         FirstName = model.FirstName,
                         LastName = model.LastName,
                         Email = model.Username,
                         UserName = model.Username,
+                        Address = model.Address,
+                        PhoneNumber = model.PhoneNumber,
+                        CityId = model.CityId,
+                        City=city
                     };
 
                     //adicionar a base de dados
@@ -198,20 +223,87 @@ namespace ShopAmazing.Web.Controllers
 
 
 
+        //public async Task<IActionResult> ChangeUser()
+        //{
+        //    var user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);//Ir buscar o user que esta logado
+
+
+        //    var model = new ChangeUserViewModel();//Aqui nao se preenche porque e o get, depois quem preenche e o user com os dados
+
+        //    if (user != null)
+        //    {
+        //        model.FirstName = user.FirstName;
+        //        model.LastName = user.LastName;
+        //    }
+
+        //    return View(model);
+        //}
+
+
+
+        //[HttpPost]
+        //public async Task<IActionResult> ChangeUser(ChangeUserViewModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);//confirmamos sempre porque nao podemos confiar no que vem da view.
+        //        //chekar sempre na base de dados
+
+        //        if (user != null)
+        //        {
+        //            user.FirstName = model.FirstName;
+        //            user.LastName = model.LastName;
+
+        //            var response = await _userHelper.UpdateUserAsync(user);
+
+        //            if (response.Succeeded)
+        //            {
+        //                ViewBag.UserMessage = "User updated!";//isto e a viewbag que esta na view do change user
+        //            }
+        //            else
+        //            {
+        //                ModelState.AddModelError(string.Empty, response.Errors.FirstOrDefault().Description);//conseguimos ir buscar estas mensagens porque no iuser helper ele retorn o identity result
+        //            }
+        //        }
+        //        else
+        //        {
+        //            ModelState.AddModelError(string.Empty, "User not found!");
+        //        }
+        //    }
+        //    return View(model);
+        //}
+
+
+
         public async Task<IActionResult> ChangeUser()
         {
-            var user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);//Ir buscar o user que esta logado
-
-
-            var model = new ChangeUserViewModel();//Aqui nao se preenche porque e o get, depois quem preenche e o user com os dados
+            var user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
+            var model = new ChangeUserViewModel();
 
             if (user != null)
             {
                 model.FirstName = user.FirstName;
                 model.LastName = user.LastName;
+                model.Address = user.Address;
+                model.PhoneNumber = user.PhoneNumber;
+
+                var city = await _countryRepository.GetCityAsync(user.CityId);
+                if (city != null)
+                {
+                    var country = await _countryRepository.GetCountryAsync(city);
+                    if (country != null)
+                    {
+                        model.CountryId = country.Id;
+                        model.Cities = _countryRepository.GetComboCities(country.Id);
+                        model.Countries = _countryRepository.GetComboCountries();
+                        model.CityId = user.CityId;
+                    }
+                }
             }
 
-            return View(model);
+            model.Cities = _countryRepository.GetComboCities(model.CountryId);
+            model.Countries = _countryRepository.GetComboCountries();
+            return this.View(model);
         }
 
 
@@ -219,36 +311,38 @@ namespace ShopAmazing.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangeUser(ChangeUserViewModel model)
         {
-            if (ModelState.IsValid)
+            if (this.ModelState.IsValid)
             {
-                var user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);//confirmamos sempre porque nao podemos confiar no que vem da view.
-                //chekar sempre na base de dados
-
+                var user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
                 if (user != null)
                 {
+                    var city = await _countryRepository.GetCityAsync(model.CityId);
+
                     user.FirstName = model.FirstName;
                     user.LastName = model.LastName;
+                    user.Address = model.Address;
+                    user.PhoneNumber = model.PhoneNumber;
+                    user.CityId = model.CityId;
+                    user.City = city;
 
-                    var response = await _userHelper.UpdateUserAsync(user);
-
-                    if (response.Succeeded)
+                    var respose = await _userHelper.UpdateUserAsync(user);
+                    if (respose.Succeeded)
                     {
-                        ViewBag.UserMessage = "User updated!";//isto e a viewbag que esta na view do change user
+                        this.ViewBag.UserMessage = "User updated!";
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, response.Errors.FirstOrDefault().Description);//conseguimos ir buscar estas mensagens porque no iuser helper ele retorn o identity result
+                        this.ModelState.AddModelError(string.Empty, respose.Errors.FirstOrDefault().Description);
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "User not found!");
+                    this.ModelState.AddModelError(string.Empty, "User no found.");
                 }
             }
-            return View(model);
+
+            return this.View(model);
         }
-
-
 
 
 
@@ -422,6 +516,16 @@ namespace ShopAmazing.Web.Controllers
         public IActionResult NotAuthorized()
         {
             return View();
+        }
+
+
+
+
+
+        public async Task<JsonResult> GetCitiesAsync(int countryId)
+        {
+            var country = await _countryRepository.GetCountryWithCitiesAsync(countryId);
+            return this.Json(country.Cities.OrderBy(c => c.Name));
         }
     }
 }
