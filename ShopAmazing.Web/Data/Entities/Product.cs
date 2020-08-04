@@ -13,7 +13,11 @@ namespace ShopAmazing.Web.Data.Entities
         public string Name { get; set; }
 
 
-        public decimal Price { get; set; }//por caus das casas decimais temos de fazer o modelo no data context
+
+        [DisplayFormat(DataFormatString ="{0:C2}", ApplyFormatInEditMode =false)]//Isto e para aparecer o simbolo da currency
+        public decimal Price { get; set; }//por causa das casas decimais temos de fazer o modelo no data context
+
+
 
 
         [Display(Name = "Image")]
